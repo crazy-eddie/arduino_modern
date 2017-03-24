@@ -6,6 +6,8 @@
 #include "../include/mpl/integral_constant.hpp"
 #include "../include/avr/hardware/tags.hpp"
 
+#define BV(X) integral_constant<uint8_t, 1 << X>{}
+
 BOOST_AUTO_TEST_CASE(pass) {  }
 
 using namespace avr::hardware::test;
@@ -33,4 +35,20 @@ BOOST_AUTO_TEST_CASE(immediate_interface)
 
     P0.input = 5;
     BOOST_CHECK(test_arch.read(p1_t()));
+}
+
+BOOST_AUTO_TEST_CASE(pin_registration)
+{
+    constexpr auto hardware = test_arch.register_pin(avr::pin1, P0, BV(0))
+                                       .register_pin(avr::pin2, P0, BV(1))
+                                       .register_pin(avr::pin3, P1, BV(0));
+
+    static_assert(hardware.has_pin(avr::pin1), "");
+    static_assert(hardware.has_pin(avr::pin2), "");
+    static_assert(hardware.has_pin(avr::pin3), "");
+
+    static_assert(!hardware.has_pin(avr::pin4), "");
+
+    constexpr auto hardware2 = hardware.register_pin(avr::pin4, P1, BV(1));
+    static_assert(hardware2.has_pin(avr::pin4), "");
 }

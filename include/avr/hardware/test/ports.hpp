@@ -22,6 +22,8 @@ struct port
     static uint8_t mode;
     static uint8_t input;
     static uint8_t output;
+
+    constexpr port() {}
 };
 
 using P0_ = port<0>;
