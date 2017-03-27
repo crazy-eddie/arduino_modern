@@ -1,6 +1,8 @@
 #ifndef AVR_HARDWARE_ARCH_HPP
 #define AVR_HARDWARE_ARCH_HPP
 
+#include "configurator.hpp"
+
 namespace avr { namespace hardware {
 
 template < typename PinTag, typename Port, typename Mask >
@@ -130,6 +132,8 @@ struct arch_ : RawOps
     {
         return PinConfiguration::has_pin(pin);
     }
+
+    //constexpr configurator fin() { return configurator{}; }
 
     constexpr arch_() {}
 };

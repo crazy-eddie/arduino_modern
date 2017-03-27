@@ -6,9 +6,9 @@ namespace avr { namespace hardware { namespace pin_config {
 constexpr struct digital_tag {} digital;
 constexpr struct analog_tag {} analog;
 
-constexpr struct input_tag {} input;
-constexpr struct input_pull_tag {} input_pull;
-constexpr struct output_tag {} output;
+constexpr struct input_tag { constexpr input_tag(){} } input;
+constexpr struct input_pull_tag { constexpr input_pull_tag(){} } input_pull;
+constexpr struct output_tag { constexpr output_tag(){} } output;
 
 // timers to come.
 
