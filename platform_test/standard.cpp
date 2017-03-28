@@ -18,8 +18,10 @@ void setup()
 }
 
 void loop() {
+    // platform.high(pin13);
     standard_arch::high(pins::pin(pin13));
     delay(1000);              // wait for a second
+    // platform.low(pin13);
     standard_arch::low(pins::pin(pin13));
     delay(500);              // wait for a second
 }
