@@ -25,9 +25,9 @@ struct test_arch_
 constexpr auto test_arch =
         arch_<test_arch_>{}
             .register_pin(pin1, P0, BV(0))
-            .register_pin(pin2, P1, BV(1))
-            .register_pin(pin3, P2, BV(3))
-        ;
+            .register_pin(pin2, P0, BV(1))
+            .register_pin(pin3, P1, BV(0))
+        .fin();
 
 }}}
 

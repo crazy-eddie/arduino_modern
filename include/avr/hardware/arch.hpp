@@ -14,6 +14,14 @@ struct pin_description
     static constexpr bool matches_tag(PinTag) { return true; }
 
     constexpr pin_description(){}
+
+    using pin_t = PinTag;
+    using port_t = Port;
+    using mask_t = Mask;
+
+    static constexpr pin_t pin = pin_t{};
+    static constexpr port_t port = port_t{};
+    static constexpr uint8_t mask = Mask::value;
 };
 
 template < typename PinTag, typename Port, typename Mask >
@@ -35,6 +43,9 @@ struct pin_configuration
     {
         return pin_configuration<PinDescription>{};
     }
+
+    template < typename IO >
+    static constexpr configurator<IO> fin(IO) { return configurator<IO>{}; }
 };
 
 template < typename PinDescription, typename ... Remaining >
@@ -53,59 +64,61 @@ struct pin_configuration<PinDescription, Remaining...>
     {
         return pin_configuration<PinDescription, Remaining..., NewDescription>{};
     }
+
+    template < typename IO >
+    static constexpr configurator<IO, PinDescription,Remaining...> fin(IO)
+    {
+        return configurator<IO, PinDescription,Remaining...>{};
+    }
 };
 
 
-
-
-
-
-template < typename RawOps, typename PinConfiguration = pin_configuration<> >
-struct arch_ : RawOps
+template < typename RawOps >
+struct basic_ops : RawOps
 {
     template < typename Pin >
     static void set_mode(Pin pin, pin_config::input_tag)
     {
-        auto old = arch_::status_register();
-        arch_::disable_interrupts();
+        auto old = basic_ops::status_register();
+        basic_ops::disable_interrupts();
 
         *(pin.port.mode_register()) &= ~pin.mask;
         *(pin.port.output_register()) &= ~pin.mask;
 
-        arch_::status_register() = old;
+        basic_ops::status_register() = old;
     }
 
     template < typename Pin >
     static void set_mode(Pin pin, pin_config::output_tag)
     {
-        auto old = arch_::status_register();
-        arch_::disable_interrupts();
+        auto old = basic_ops::status_register();
+        basic_ops::disable_interrupts();
 
         *(pin.port.mode_register()) |= pin.mask;
 
-        arch_::status_register() = old;
+        basic_ops::status_register() = old;
     }
 
     template < typename Pin >
     static void high(Pin pin)
     {
-        auto old = arch_::status_register();
-        arch_::disable_interrupts();
+        auto old = basic_ops::status_register();
+        basic_ops::disable_interrupts();
 
         *(pin.port.output_register()) |= pin.mask;
 
-        arch_::status_register() = old;
+        basic_ops::status_register() = old;
     }
 
     template < typename Pin >
     static void low(Pin pin)
     {
-        auto old = arch_::status_register();
-        arch_::disable_interrupts();
+        auto old = basic_ops::status_register();
+        basic_ops::disable_interrupts();
 
         *(pin.port.output_register()) &= ~pin.mask;
 
-        arch_::status_register() = old;
+        basic_ops::status_register() = old;
     }
 
     template < typename Pin >
@@ -114,11 +127,17 @@ struct arch_ : RawOps
         return *pin.port.input_register() & pin.mask;
     }
 
+};
 
+
+
+template < typename RawOps, typename PinConfiguration = pin_configuration<> >
+struct arch__ : RawOps
+{
     template < typename PinDesc >
-    constexpr auto register_pin(PinDesc desc) -> arch_<RawOps, decltype(PinConfiguration::append_pin(desc))>
+    constexpr auto register_pin(PinDesc desc) -> arch__<RawOps, decltype(PinConfiguration::append_pin(desc))>
     {
-        return arch_<RawOps, decltype(PinConfiguration::append_pin(desc))>{};
+        return arch__<RawOps, decltype(PinConfiguration::append_pin(desc))>{};
     }
 
     template < typename Pin, typename Port, typename Mask >
@@ -133,10 +152,17 @@ struct arch_ : RawOps
         return PinConfiguration::has_pin(pin);
     }
 
-    //constexpr configurator fin() { return configurator{}; }
+    //constexpr configurator< fin() { return configurator{}; }
+    constexpr auto fin() -> decltype(PinConfiguration::fin(RawOps{}))
+    {
+        return PinConfiguration::fin(RawOps{});
+    }
 
-    constexpr arch_() {}
+    constexpr arch__() {}
 };
+
+template < typename RawOps >
+using arch_ = arch__<basic_ops<RawOps>>;
 
 
 }}

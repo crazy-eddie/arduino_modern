@@ -32,7 +32,7 @@ using standard_arch = arch_<arduino>;
 
 // PWM and AI pins not yet available.
 
-constexpr auto standard =
+constexpr auto standard_hw =
         standard_arch{}
             .register_pin(pin1, ports::PD, BV(1))
             .register_pin(pin2, ports::PD, BV(2))
@@ -47,8 +47,7 @@ constexpr auto standard =
             //.register_pin(pin11, ports::PB, BV(3))
             .register_pin(pin12, ports::PB, BV(4))
             .register_pin(pin13, ports::PB, BV(5))
-        //.fin();
-        ;
+        .fin();
 
 /*
  * constexpr auto standard = arch.register_pin(pin13, PB, i<_BV(5)>{});
