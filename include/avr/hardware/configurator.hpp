@@ -53,6 +53,12 @@ struct pin_config_<PinDesc, unset_mode>
 
 };
 
+
+template < typename ... PinConfig >
+struct pin_collection
+{
+};
+
 template < typename Ops, typename ... PinConfig >
 struct configurator_
 {
@@ -63,6 +69,14 @@ struct configurator_
     {
         return configurator_<Ops, decltype(PinConfig::set_mode(pin,mode))...>{};
     }
+
+    using io_t = Ops;
+    static constexpr auto io = io_t{};
+
+    template < typename ... Pins > struct pins_ {};
+
+    using pins_t = pin_collection<PinConfig...>;
+    static constexpr auto pins = pins_t{};
 };
 
 template < typename Ops, typename ... PinDesc >

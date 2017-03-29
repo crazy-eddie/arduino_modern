@@ -10,19 +10,25 @@ using namespace avr::hardware;
 
 using namespace avr;
 
-auto const platform = initialize(standard_hw.set_mode(pin13, pin_config::output));
+// 690 -30-> 728 -8-> 736 -8-> 744
+auto const driver = initialize(standard_hw.set_mode(pin13, pin_config::output));
+                                          //.set_mode(pin1, pin_config::output)
+                                          //.set_mode(pin2, pin_config::output));
+
+constexpr auto pin = create_pin(pin13, ports::PB, BV(5));
 
 void setup()
 {
     //standard_arch::set_mode(pins::pin(pin13), pin_config::output);
+    //standard_arch::set_mode(pin, pin_config::output);
 }
 
 void loop() {
-    // platform.high(pin13);
-    standard_arch::high(pins::pin(pin13));
+    // driver.high(pin13);
+    standard_arch::high(pin);
     delay(1000);              // wait for a second
-    // platform.low(pin13);
-    standard_arch::low(pins::pin(pin13));
+    // driver.low(pin13);
+    standard_arch::low(pin);
     delay(500);              // wait for a second
 }
 

@@ -17,9 +17,9 @@ using namespace avr;
 
 BOOST_AUTO_TEST_CASE(initializes)
 {
-    auto const hw_config = initialize(test_arch.set_mode(pin1,input)
-                                               .set_mode(pin2,output)
-                                               .set_mode(pin3,input));
+    auto const driver = initialize(test_arch.set_mode(pin1,input)
+                                            .set_mode(pin2,output)
+                                            .set_mode(pin3,input));
 
     BOOST_CHECK_EQUAL(0x02, P0.mode);
     BOOST_CHECK_EQUAL(0x00, P1.mode);
