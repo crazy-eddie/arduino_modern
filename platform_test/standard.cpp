@@ -15,21 +15,17 @@ auto const driver = initialize(standard_hw.set_mode(pin13, pin_config::output));
                                           //.set_mode(pin1, pin_config::output)
                                           //.set_mode(pin2, pin_config::output));
 
-constexpr auto pin = create_pin(pin13, ports::PB, BV(5));
 
 void setup()
 {
-    //standard_arch::set_mode(pins::pin(pin13), pin_config::output);
-    //standard_arch::set_mode(pin, pin_config::output);
 }
 
 void loop() {
-    // driver.high(pin13);
-    standard_arch::high(pin);
+    driver.high(pin13);
     delay(1000);              // wait for a second
-    // driver.low(pin13);
-    standard_arch::low(pin);
+    driver.low(pin13);
     delay(500);              // wait for a second
+    // driver.read(pin13); // Compiler error!
 }
 
 

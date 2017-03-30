@@ -17,9 +17,6 @@ struct test_arch_
     static void enable_interrupts() {}
 };
 
-//constexpr arch_<test_arch_> test_arch;
-
-
 #define BV(X) mpl::integral_constant<uint8_t, 1 << X>{}
 
 constexpr auto test_arch =

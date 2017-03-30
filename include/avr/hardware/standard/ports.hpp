@@ -6,9 +6,9 @@ namespace avr { namespace hardware { namespace standard { namespace ports {
 template < typename Port, uint8_t BitMask >
 struct pin
 {
-    Port port;
+    static constexpr auto port = Port{};
 
-    static constexpr uint8_t mask = BitMask;
+    static constexpr auto mask = BitMask;
 };
 
 #define PORT(X) \
