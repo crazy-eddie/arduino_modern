@@ -57,30 +57,51 @@ struct pin_config_<PinDesc, unset_mode>
 template < typename ... PinConfig >
 struct pin_collection
 {
+    template < typename PinTag, typename Mode >
+    static constexpr auto set_mode(PinTag pin, Mode mode) -> pin_collection<decltype(PinConfig::set_mode(pin,mode))...>
+    {
+        return pin_collection<decltype(PinConfig::set_mode(pin,mode))...>{};
+    }
 };
 
-template < typename Ops, typename ... PinConfig >
+template < typename Ops, typename Pins >
 struct configurator_
 {
     constexpr configurator_() {}
 
-    template < typename PinTag, typename Mode >
-    static constexpr auto set_mode(PinTag pin, Mode mode) -> configurator_<Ops, decltype(PinConfig::set_mode(pin,mode))...>
+    template < typename Collection >
+    static constexpr configurator_<Ops, Collection> create_config(Collection)
     {
-        return configurator_<Ops, decltype(PinConfig::set_mode(pin,mode))...>{};
+        return configurator_<Ops, Collection>{};
+    }
+
+    template < typename Pin, typename Mode >
+    static constexpr auto set_mode(Pin pin, Mode mode) -> decltype(create_config(Pins::set_mode(pin, mode)))
+    {
+        return create_config(Pins::set_mode(pin, mode));
+    }
+
+    //template < typename PinTag, typename Mode >
+    //static constexpr auto set_mode(PinTag pin, Mode mode) -> configurator_<Ops, decltype(PinConfig::set_mode(pin,mode))...>
+    //{
+    //    return configurator_<Ops, decltype(PinConfig::set_mode(pin,mode))...>{};
+    //}
+
+    template < typename Device >
+    static constexpr configurator_<Ops,Pins> add_device(Device)
+    {
+        return configurator_<Ops,Pins>{};
     }
 
     using io_t = Ops;
     static constexpr auto io = io_t{};
 
-    template < typename ... Pins > struct pins_ {};
-
-    using pins_t = pin_collection<PinConfig...>;
+    using pins_t = Pins;
     static constexpr auto pins = pins_t{};
 };
 
 template < typename Ops, typename ... PinDesc >
-using configurator = configurator_< Ops, pin_config_<PinDesc> ... >;
+using configurator = configurator_< Ops, pin_collection<pin_config_<PinDesc> ...> >;
 
 }}
 
