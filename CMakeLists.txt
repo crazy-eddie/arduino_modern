@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 
 set(MODE "platform" CACHE STRING "")
+set(ARDUINO_CXX_FLAGS "-std=c++14 -mcall-prologues -ffunction-sections -fdata-sections -fno-exceptions")
 
 if (${MODE} STREQUAL "platform")
     set(CMAKE_TOOLCHAIN_FILE ${CMAKE_SOURCE_DIR}/../arduino-cmake/cmake/ArduinoToolchain.cmake)

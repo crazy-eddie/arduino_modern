@@ -15,7 +15,6 @@ auto const driver = initialize(standard_hw.set_mode(pin13, pin_config::output));
                                           //.set_mode(pin1, pin_config::output)
                                           //.set_mode(pin2, pin_config::output));
 
-
 void setup()
 {
 }
