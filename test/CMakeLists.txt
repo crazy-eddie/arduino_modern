@@ -7,7 +7,7 @@ add_custom_target(tests)
 
 include_directories(${Boost_INCLUDE_DIR})
 
-set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -std=c++11)
+set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} -std=c++14)
 
 if (CI_BUILD)
     file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/test/reports)
@@ -38,4 +38,4 @@ add_boost_test(arch arch.cpp)
 add_boost_test(configurator configurator.cpp)
 add_boost_test(initialize initialize.cpp)
 add_boost_test(driver driver.cpp)
-add_boost_test(stepper stepper.cpp)
+#add_boost_test(stepper stepper.cpp)

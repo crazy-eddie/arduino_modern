@@ -135,19 +135,19 @@ template < typename RawOps, typename PinConfiguration = pin_configuration<> >
 struct arch__ : RawOps
 {
     template < typename PinDesc >
-    constexpr auto register_pin(PinDesc desc) -> arch__<RawOps, decltype(PinConfiguration::append_pin(desc))>
+    constexpr auto register_pin(PinDesc desc) const
     {
         return arch__<RawOps, decltype(PinConfiguration::append_pin(desc))>{};
     }
 
     template < typename Pin, typename Port, typename Mask >
-    constexpr auto register_pin(Pin pin, Port port, Mask mask) -> decltype(register_pin(create_pin(pin,port,mask)))
+    constexpr auto register_pin(Pin pin, Port port, Mask mask) const
     {
         return register_pin(create_pin(pin,port,mask));
     }
 
     template < typename Pin >
-    constexpr bool has_pin(Pin pin)
+    constexpr bool has_pin(Pin pin) const
     {
         return PinConfiguration::has_pin(pin);
     }
