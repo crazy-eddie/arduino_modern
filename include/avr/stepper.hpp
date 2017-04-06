@@ -3,25 +3,36 @@
 
 namespace avr {
 
-// gear_train of gears.
-// each gear has a tooth count....actually gears can have multiple output teeth.
-// attaching a motor to one end of the gear train will compute
-//    gear ratio of train using drivin/drive
-// mechanical advantage can also be computed.
+template < typename T >
+T&& declval();
 
-// Motor first, gears later.
-
-// step motors have a step count per revolution.  For now at least they also have a turn ratio.
-//   calculate angle of one step on motor.
-//   apply ratio of gear train to get angle of output per step.
-//   use this angle to calculate the step count needed to turn x deg/rad
-//   also use to calculate speed of signal to create given rpm.
-
-template < int Input, int Output >
-struct gear_train
+struct steps
 {
-    static constexpr double ratio = static_cast<double>(Input) / static_cast<double>(Output);
+    constexpr steps(int i) : count{i} {}
+
+    int count;
 };
+
+struct phases
+{
+    constexpr phases(int i) : count{i} {}
+
+    int count;
+};
+
+struct stepper_motor
+{
+    constexpr stepper_motor(avr::steps s, avr::phases p) : steps_{s}, phases_{p} {}
+
+    constexpr auto steps() -> decltype(declval<avr::steps>().count) { return steps_.count; }
+    constexpr auto phases() -> decltype(declval<avr::phases>().count) { return phases_.count; }
+
+private:
+    avr::steps steps_;
+    avr::phases phases_;
+};
+
+constexpr stepper_motor stepper(steps s, phases p) { return stepper_motor{s,p}; }
 
 }
 

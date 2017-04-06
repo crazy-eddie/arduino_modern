@@ -64,21 +64,31 @@ struct pin_collection
     }
 };
 
-template < typename Ops, typename Pins >
+template < typename ... Devices >
+struct device_collection
+{
+    constexpr device_collection(){}
+
+    template < typename Device >
+    static constexpr device_collection<Devices..., Device> add(Device) { return device_collection<Devices..., Device>{}; }
+};
+
+
+template < typename Ops, typename Pins, typename Devices >
 struct configurator_
 {
     constexpr configurator_() {}
 
-    template < typename Collection >
-    static constexpr configurator_<Ops, Collection> create_config(Collection)
+    template < typename PinCollection, typename DeviceCollection >
+    static constexpr configurator_<Ops, PinCollection, DeviceCollection> create_config(PinCollection,DeviceCollection)
     {
-        return configurator_<Ops, Collection>{};
+        return configurator_<Ops, PinCollection, DeviceCollection>{};
     }
 
     template < typename Pin, typename Mode >
-    static constexpr auto set_mode(Pin pin, Mode mode) -> decltype(create_config(Pins::set_mode(pin, mode)))
+    static constexpr auto set_mode(Pin pin, Mode mode) -> decltype(create_config(Pins::set_mode(pin, mode),Devices{}))
     {
-        return create_config(Pins::set_mode(pin, mode));
+        return create_config(Pins::set_mode(pin, mode),Devices{});
     }
 
     //template < typename PinTag, typename Mode >
@@ -88,9 +98,9 @@ struct configurator_
     //}
 
     template < typename Device >
-    static constexpr configurator_<Ops,Pins> add_device(Device)
+    static constexpr auto add_device(Device device) -> decltype(device.configure(configurator_{}))
     {
-        return configurator_<Ops,Pins>{};
+        return device.configure(configurator_<Ops,Pins,Devices>{});
     }
 
     using io_t = Ops;
@@ -98,10 +108,13 @@ struct configurator_
 
     using pins_t = Pins;
     static constexpr auto pins = pins_t{};
+
+    using devices_t = Devices;
+    static constexpr auto devices = devices_t{};
 };
 
 template < typename Ops, typename ... PinDesc >
-using configurator = configurator_< Ops, pin_collection<pin_config_<PinDesc> ...> >;
+using configurator = configurator_< Ops, pin_collection<pin_config_<PinDesc> ...>, device_collection<> >;
 
 }}
 

@@ -66,8 +66,8 @@ struct create_pins;
 template < typename ... Pins >
 struct create_pins<pin_collection<Pins...>> : create_drivers<Pins...> {};
 
-template < typename IO, typename ... Pins >
-driver_<IO, create_pins<typename active_pins<Pins...>::type>> initialize(configurator_<IO, pin_collection<Pins...>> conf)
+template < typename IO, typename ... Pins, typename Devices >
+driver_<IO, create_pins<typename active_pins<Pins...>::type>> initialize(configurator_<IO, pin_collection<Pins...>, Devices> conf)
 {
     using active = typename active_pins<Pins...>::type;
     initialize_pins(conf.io, active{});
