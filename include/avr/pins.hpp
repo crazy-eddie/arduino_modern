@@ -13,7 +13,7 @@ struct pin_tag { static constexpr uint8_t id = PinId; constexpr pin_tag() {}};
 
 #define PIN(X) \
     using pin ## X ## _tag = pin_tag<X>; \
-    constexpr pin ## X ## _tag pin ## X
+    constexpr auto pin ## X = pin ## X ## _tag{};
 
 PIN(1);
 PIN(2);

@@ -82,8 +82,8 @@ struct basic_ops : RawOps
         auto old = basic_ops::status_register();
         basic_ops::disable_interrupts();
 
-        *(pin.port.mode_register()) &= ~pin.mask;
-        *(pin.port.output_register()) &= ~pin.mask;
+        *(pin.port().mode_register()) &= ~pin.mask();
+        *(pin.port().output_register()) &= ~pin.mask();
 
         basic_ops::status_register() = old;
     }
@@ -94,7 +94,7 @@ struct basic_ops : RawOps
         auto old = basic_ops::status_register();
         basic_ops::disable_interrupts();
 
-        *(pin.port.mode_register()) |= pin.mask;
+        *(pin.port().mode_register()) |= pin.mask();
 
         basic_ops::status_register() = old;
     }
@@ -105,7 +105,7 @@ struct basic_ops : RawOps
         auto old = basic_ops::status_register();
         basic_ops::disable_interrupts();
 
-        *(pin.port.output_register()) |= pin.mask;
+        *(pin.port().output_register()) |= pin.mask();
 
         basic_ops::status_register() = old;
     }
@@ -124,7 +124,7 @@ struct basic_ops : RawOps
     template < typename Pin >
     static bool read(Pin pin)
     {
-        return *pin.port.input_register() & pin.mask;
+        return *pin.port().input_register() & pin.mask();
     }
 
 };
@@ -152,8 +152,7 @@ struct arch__ : RawOps
         return PinConfiguration::has_pin(pin);
     }
 
-    //constexpr configurator< fin() { return configurator{}; }
-    constexpr auto fin() -> decltype(PinConfiguration::fin(RawOps{}))
+    constexpr auto fin()
     {
         return PinConfiguration::fin(RawOps{});
     }

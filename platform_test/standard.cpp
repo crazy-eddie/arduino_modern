@@ -2,7 +2,6 @@
 #include "../include/avr/pins.hpp"
 #include "../include/avr/hardware/standard/arch.hpp"
 #include "../include/avr/hardware/standard/ports.hpp"
-#include "../include/avr/hardware/standard/pins.hpp"
 #include "../include/avr/hardware/initialize.hpp"
 
 using namespace avr::hardware::standard;
