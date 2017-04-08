@@ -14,58 +14,52 @@ template < typename IO
 struct configurator
 {
     template < typename Pin >
-    constexpr bool available(Pin pin) const
+    static constexpr bool available(Pin pin)
     {
-        return available_pins.has(pin);
+        return AvailablePins::has(pin);
     }
 
     template < typename Pin, typename Mode >
-    constexpr auto set_mode(Pin pin, Mode mode) const
+    static constexpr auto set_mode(Pin pin, Mode mode)
     {
-        return create( available_pins.remove(pin)
-                     , configured_pins.add(pin, make_config(pin,mode)));
+        return create( AvailablePins::remove(pin)
+                     , ConfiguredPins::add(pin, make_config(pin,mode)));
     }
 
     template < typename Pin >
-    constexpr auto mode(Pin pin) const
+    static constexpr auto mode(Pin pin)
     {
-        return configured_pins[pin].mode; // invalid use of void?  Pin isn't configured.
+        return ConfiguredPins::get(pin).mode; // invalid use of void?  Pin isn't configured.
     }
 
-    constexpr IO io() const { return IO{}; }
+    static constexpr IO io() { return IO{}; }
 
-    constexpr ConfiguredPins configured() const { return configured_pins; }
+    constexpr ConfiguredPins configured() { return ConfiguredPins{}; }
 
-    constexpr configurator(AvailablePins p) : available_pins{p} {}
-    constexpr configurator(AvailablePins ap, ConfiguredPins cp)
-        : available_pins{ap}
-        , configured_pins{cp}
-    {}
+    constexpr configurator() {}
 
 private:
-    AvailablePins available_pins;
-    ConfiguredPins configured_pins;
 
     template < typename PinDesc, typename Mode >
     struct pin_config
     {
-        constexpr pin_config(PinDesc p) : pin_desc{p}, mode{} {}
+        constexpr pin_config() {}
 
-        PinDesc pin_desc;
-        Mode mode;
+        static constexpr auto pin_desc = PinDesc{};
+        static constexpr auto mode = Mode{};
     };
 
     template < typename Pin, typename Mode >
-    constexpr auto make_config(Pin pin, Mode mode) const
+    static constexpr auto make_config(Pin pin, Mode mode)
     {
-        using desc = decltype(available_pins[pin]);
-        return pin_config<desc,Mode>{available_pins[pin]};
+        using desc = decltype(AvailablePins::get(pin));
+        return pin_config<desc,Mode>{};
     }
 
     template < typename AP, typename CP >
-    constexpr auto create(AP ap, CP cp) const
+    static constexpr auto create(AP ap, CP cp)
     {
-        return configurator<IO,AP,CP>{ap,cp};
+        return configurator<IO,AP,CP>{};
     }
 };
 
@@ -74,7 +68,7 @@ private:
 template < typename PlatformBuilder >
 constexpr auto describe_platform(PlatformBuilder builder)
 {
-    return detail_::configurator<decltype(builder.io()), decltype(builder.pins())>{builder.pins()};
+    return detail_::configurator<decltype(builder.io()), decltype(builder.pins())>{};
 }
 
 
