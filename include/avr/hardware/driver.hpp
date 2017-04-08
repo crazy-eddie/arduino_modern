@@ -5,6 +5,94 @@
 
 namespace avr { namespace hardware {
 
+namespace detail_ {
+
+
+
+template < typename IO
+         , typename InputPins = mpl::lookup_collection
+         , typename OutputPins = mpl::lookup_collection >
+struct driver
+{
+    constexpr driver() {}
+
+    constexpr driver(InputPins ip, OutputPins op)
+        : input_pins(ip)
+        , output_pins(op)
+    {}
+
+    template < typename Pin >
+    void high(Pin pin) const
+    {
+        IO::high(output_pins[pin]);
+    }
+
+    template < typename Pin >
+    void low(Pin pin) const
+    {
+        IO::low(output_pins[pin]);
+    }
+
+    template < typename Pin >
+    bool read(Pin pin) const
+    {
+        return IO::read(input_pins[pin]);
+    }
+
+    template < typename Pin, typename Desc >
+    constexpr auto add_pin(Pin pin, Desc desc, pin_config::input_tag) const
+    {
+        using new_input = decltype(input_pins.add(pin, desc));
+
+        return driver<IO, new_input, OutputPins>{input_pins.add(pin,desc), output_pins};
+    }
+
+    template < typename Pin, typename Desc >
+    constexpr auto add_pin(Pin pin, Desc desc, pin_config::output_tag) const
+    {
+        using new_output = decltype(output_pins.add(pin,desc));
+
+        return driver<IO, InputPins, new_output>{input_pins, output_pins.add(pin,desc)};
+    }
+
+private:
+    InputPins input_pins;
+    OutputPins output_pins;
+};
+
+// TODO: accumulate
+template < typename Driver, typename End >
+constexpr auto const create_driver(Driver driver, End,End)
+{
+    return driver;
+}
+
+template < typename Driver, typename Beg, typename End >
+constexpr auto const create_driver(Driver driver, Beg beg, End end)
+{
+    return create_driver(driver.add_pin( beg.key()
+                                       , beg.deref().pin_desc
+                                       , beg.deref().mode), beg.next(), end);
+}
+
+template < typename IO >
+constexpr auto const new_driver(IO)
+{
+    return driver<IO>{};
+}
+
+}
+
+template < typename HardwareConfig >
+auto const create_driver(HardwareConfig cfg)
+{
+    return detail_::create_driver( detail_::new_driver(cfg.io())
+                                 , cfg.configured().begin()
+                                 , cfg.configured().end() );
+}
+
+
+#if 0
 template < typename PinDesc >
 struct input_pin
 {
@@ -108,6 +196,7 @@ struct driver_
     static bool read(Pin pin) { return Pins::read(io,pin); }
 };
 
+#endif
 
 }}
 

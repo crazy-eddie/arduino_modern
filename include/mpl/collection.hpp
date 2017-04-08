@@ -125,10 +125,12 @@ struct lc_iter<lc_node<Key,Value,Next>>
 
     constexpr bool at_end() const { return false; }
 
-    constexpr auto deref() const
+    constexpr auto deref() const // TODO: fix this concept!
     {
         return node[Key{}];
     }
+
+    constexpr Key key() const { return Key{}; }
 
     constexpr lc_iter<Next> next() const { return lc_iter<Next>{node}; }
 

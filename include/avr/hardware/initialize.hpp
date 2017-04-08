@@ -5,6 +5,7 @@
 //#include "driver.hpp"
 
 #include "../../mpl/util.hpp"
+#include "driver.hpp"
 
 // TODO: Can probably eliminate this by sticking the initialization into the pin itself
 //       as a static initialization.  Thus you'd go: auto const pin = hardware_config.pin(pin1)
@@ -23,7 +24,7 @@ auto initialize(HardwareConfig hardware_config)
                        hardware_config.io().set_mode(pin.pin_desc, pin.mode);
                    });
 
-    return false;
+    return create_driver(hardware_config);
 }
 
 }}

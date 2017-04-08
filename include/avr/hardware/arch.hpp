@@ -52,7 +52,7 @@ struct basic_ops : RawOps
         auto old = basic_ops::status_register();
         basic_ops::disable_interrupts();
 
-        *(pin.port.output_register()) &= ~pin.mask;
+        *(pin.port().output_register()) &= ~pin.mask();
 
         basic_ops::status_register() = old;
     }
