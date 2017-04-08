@@ -29,15 +29,19 @@ constexpr port<0> P0;
 constexpr port<1> P1;
 constexpr port<2> P2;
 
-// Means we can't include this in more than one cpp file in same test program.
-template <int I>
-uint8_t port<I>::mode = 0;
+#define DEFINE_TEST_PORT_REGISTERS() \
+template <int I>                     \
+uint8_t port<I>::mode = 0;           \
+                                     \
+template <int I>                     \
+uint8_t port<I>::input = 0;          \
+                                     \
+template <int I>                     \
+uint8_t port<I>::output = 0
 
-template <int I>
-uint8_t port<I>::input = 0;
-
-template <int I>
-uint8_t port<I>::output = 0;
+#ifndef OMIT_PORT_REGISTERS
+DEFINE_TEST_PORT_REGISTERS();
+#endif
 
 }}}
 
