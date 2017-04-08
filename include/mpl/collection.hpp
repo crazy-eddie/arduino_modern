@@ -65,6 +65,18 @@ struct lc_node : Next
         return lc_node<Key_,Value_,lc_node>{val,*this};
     }
 
+    template < typename Key_ >
+    constexpr auto remove(Key_ key) const
+    {
+        using next_ = decltype(Next::remove(key));
+        return lc_node<Key, Value, next_>{value, Next::remove(key)};
+    }
+
+    constexpr Next remove(Key) const
+    {
+        return *this;
+    }
+
     template < typename Key_>
     constexpr auto operator[](Key_ key) const
     {

@@ -35,4 +35,10 @@ BOOST_AUTO_TEST_CASE(lookup_collection)
 
     BOOST_CHECK_EQUAL(t1, 5);
     BOOST_CHECK_EQUAL(static_cast<int>(t2 * 100 + .5), 666);
+
+    constexpr auto test_collection2 = t0.remove(key<0>{});
+    BOOST_CHECK(!test_collection.has(key<0>{}));
+
+    // uncomment to explode...
+    //constexpr auto blow = test_collection2[key<0>{}];
 }

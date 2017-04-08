@@ -13,82 +13,58 @@ using namespace avr::hardware::pin_config;
 
 using namespace avr;
 
+constexpr auto test_platform =
+    avr::hardware::arch_<avr::hardware::test::test_arch_>{}
+        .register_pin(avr::pin1, avr::hardware::test::P0, 0)
+        .register_pin(avr::pin2, avr::hardware::test::P0, 1)
+        .register_pin(avr::pin3, avr::hardware::test::P1, 0)
+    ;
 
-namespace {
 
-template < typename PinTag >
-struct test_desc
+BOOST_AUTO_TEST_CASE(initial_state)
 {
-    using pin_t = PinTag;
+    constexpr auto test_configurator = avr::hardware::describe_platform(test_platform);
 
+    constexpr auto t0 = test_configurator.available(avr::pin1);
+    constexpr auto t1 = test_configurator.available(avr::pin2);
+    constexpr auto t2 = test_configurator.available(avr::pin3);
 
-    template < typename P >
-    static constexpr bool matches_tag(P) { return false; }
-
-    static constexpr bool matches_tag(PinTag) { return true; }
-};
-
-template < typename T0, typename T1 >
-constexpr bool is_same(T0,T1) { return false; }
-template < typename T >
-constexpr bool is_same(T,T) { return true; }
-
-template < typename Collection > struct splitter;
-
-template < typename First, typename ... Remain >
-struct splitter<pin_collection<First,Remain...>>
-{
-    using first = First;
-    using remain = pin_collection<Remain...>;
-};
-
-template < typename Collection, typename Pin, bool matches = splitter<Collection>::first::pin.matches_tag(Pin{}) >
-struct find_pin_t
-{
-    using type = typename find_pin_t<typename splitter<Collection>::remain,Pin>::type;
-};
-
-template < typename Collection, typename Pin >
-struct find_pin_t<Collection,Pin,true>
-{
-    using type = typename splitter<Collection>::first;
-};
-
-template < typename Collection, typename Pin >
-constexpr typename find_pin_t<Collection,Pin>::type find_pin(Collection col, Pin pin)
-{
-    using found = typename find_pin_t<Collection,Pin>::type;
-    return found{};
+    BOOST_CHECK(t0 && t1 && t2);
 }
 
-template < typename Config, typename Pin >
-constexpr auto pin_mode(Config cfg, Pin pin) -> decltype(find_pin(cfg.pins, pin).mode)
+#if 1
+BOOST_AUTO_TEST_CASE(configure_pins)
 {
-    return find_pin(cfg.pins, pin).mode;
+    constexpr auto test_configurator = avr::hardware::describe_platform(test_platform);
+
+    constexpr auto configured =
+        test_configurator
+            .set_mode(avr::pin1, avr::hardware::pin_config::input)
+            .set_mode(avr::pin2, avr::hardware::pin_config::output)
+            // uncomment next line to cause blowout.
+            //.set_mode(avr::pin1, avr::hardware::pin_config::output) // TODO: devise a way for a better error message here.
+        ;
+
+    // pin availability:
+    constexpr auto av0 = configured.available(avr::pin1);
+    constexpr auto av1 = configured.available(avr::pin2);
+    constexpr auto av2 = configured.available(avr::pin3);
+
+    BOOST_CHECK(!av0 && !av1 && av2);
+
+    // get modes:
+    constexpr auto m0 = configured.mode(avr::pin1);
+    constexpr auto m1 = configured.mode(avr::pin2);
+
+    BOOST_CHECK(mpl::same_type(m0, avr::hardware::pin_config::input));
+    BOOST_CHECK(mpl::same_type(m1, avr::hardware::pin_config::output));
+
+    // uncomment to explode:
+    //constexpr auto blow = configured.mode(avr::pin3);
 }
+#endif
 
-}
-
-
-BOOST_AUTO_TEST_CASE(set_mode)
-{
-    constexpr auto test_configurator = configurator<int, test_desc<pin1_tag>, test_desc<pin2_tag>>{};
-
-    constexpr auto test0 = test_configurator.set_mode(pin1, input);
-    //constexpr auto test1 = test0.set_mode(pin1, output); // compile error!
-    constexpr auto test2 = test0.set_mode(pin2, output);
-
-    BOOST_CHECK(is_same(unset_mode{}, pin_mode(test_configurator, pin1)));
-    BOOST_CHECK(is_same(unset_mode{}, pin_mode(test_configurator, pin2)));
-
-    BOOST_CHECK(is_same(input, pin_mode(test0, pin1)));
-    BOOST_CHECK(is_same(unset_mode{}, pin_mode(test0, pin2)));
-
-    BOOST_CHECK(is_same(input, pin_mode(test2, pin1)));
-    BOOST_CHECK(is_same(output, pin_mode(test2, pin2)));
-
-}
-
+#if 0
 namespace {
 
 struct test_device
@@ -103,36 +79,12 @@ struct test_device
 
     template < typename Configurator >
     static constexpr auto configure(Configurator config)
-        -> decltype(config.create_config(config.pins, config.devices.add(test_device{}))
-                .set_mode(pin1,input).set_mode(pin2,output).set_mode(pin3,output))
     {
         return config.create_config(config.pins, config.devices.add(test_device{}))
                 .set_mode(pin1,input).set_mode(pin2,output).set_mode(pin3,output);
     }
 };
 
-//emplate < typename Config, typename Device >
-//onstexpr bool has_device(Config,Device) { return false; }
-
-template < typename IO, typename Pins, typename Device>
-constexpr bool has_device(configurator_<IO,Pins,device_collection<>>,Device)
-{
-    return false;
-}
-
-template < typename IO, typename Pins, typename ...Remain, typename Device>
-constexpr bool has_device(configurator_<IO,Pins,device_collection<Device,Remain...>>,Device)
-{
-    return true;
-}
-
-template < typename IO, typename Pins, typename First, typename ... Remain, typename Device >
-constexpr bool has_device(configurator_<IO,Pins,device_collection<First,Remain...>>,Device device)
-{
-    return has_device(configurator_<IO,Pins,device_collection<Remain...>>{},device);
-}
-
-}
 
 BOOST_AUTO_TEST_CASE(devices) // TODO: This should actually remove the pin entirely.  Don't want it to give access later.
 {
@@ -148,3 +100,4 @@ BOOST_AUTO_TEST_CASE(devices) // TODO: This should actually remove the pin entir
 
     BOOST_CHECK(has_device(test0, test_device{}));
 }
+#endif

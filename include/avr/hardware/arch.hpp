@@ -72,20 +72,22 @@ struct arch__
     template < typename Pin, typename Port, typename Mask >
     constexpr auto register_pin(Pin p, Port port, Mask mask) const
     {
-        return create(p, pins.add(p, pin(port,mask)));
+        return create(p, pins_.add(p, pin(port,mask)));
     }
 
     template < typename Pin >
     constexpr bool has_pin(Pin pin) const
     {
-        return pins.has(pin);
+        return pins_.has(pin);
     }
 
+    constexpr PinConfiguration pins() const { return pins_; }
+
     constexpr arch__() {}
-    constexpr arch__(PinConfiguration p) : pins(p) {}
+    constexpr arch__(PinConfiguration p) : pins_(p) {}
 
 private:
-    PinConfiguration pins;
+    PinConfiguration pins_;
 
     template < typename Pin, typename NewPins >
     constexpr auto create(Pin, NewPins p) const

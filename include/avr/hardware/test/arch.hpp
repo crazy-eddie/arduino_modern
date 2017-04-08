@@ -1,6 +1,7 @@
 #ifndef AVR_HARDWARE_TEST_HPP
 #define AVR_HARDWARE_TEST_HPP
 
+#include "../configurator.hpp" // TODO: Shouldn't be depending on this in this file.
 #include "../../pins.hpp"
 #include "ports.hpp"
 #include "../tags.hpp"
@@ -17,16 +18,13 @@ struct test_arch_
     static void enable_interrupts() {}
 };
 
-#if 0
-#define BV(X) mpl::integral_constant<uint8_t, 1 << X>{}
 
 constexpr auto test_arch =
-        arch_<test_arch_>{}
-            .register_pin(pin1, P0, BV(0))
-            .register_pin(pin2, P0, BV(1))
-            .register_pin(pin3, P1, BV(0))
-        .fin();
-#endif
+    describe_platform(arch_<test_arch_>{}
+        .register_pin(pin1, P0, 0)
+        .register_pin(pin2, P0, 1)
+        .register_pin(pin3, P1, 0)
+    );
 
 }}}
 
