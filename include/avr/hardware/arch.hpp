@@ -6,6 +6,8 @@
 
 namespace avr { namespace hardware {
 
+// TODO: Would be nice to ensure a pin can't be registered with port/mask config already used.
+//       Also if the port is full.
 
 template < typename RawOps >
 struct basic_ops : RawOps
@@ -82,6 +84,8 @@ struct arch__
     }
 
     constexpr PinConfiguration pins() const { return pins_; }
+
+    constexpr RawOps io() const { return RawOps{}; }
 
     constexpr arch__() {}
     constexpr arch__(PinConfiguration p) : pins_(p) {}

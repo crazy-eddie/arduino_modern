@@ -7,7 +7,8 @@ namespace avr { namespace hardware {
 
 namespace detail_ {
 
-template < typename AvailablePins
+template < typename IO
+         , typename AvailablePins
          , typename ConfiguredPins = mpl::lookup_collection
          >
 struct configurator
@@ -21,9 +22,8 @@ struct configurator
     template < typename Pin, typename Mode >
     constexpr auto set_mode(Pin pin, Mode mode) const
     {
-        using remaining = decltype(available_pins.remove(pin));
-        using config = decltype(configured_pins.add(pin, make_config(pin,mode)));
-        return configurator<remaining, config>{available_pins.remove(pin), configured_pins.add(pin, make_config(pin,mode))};
+        return create( available_pins.remove(pin)
+                     , configured_pins.add(pin, make_config(pin,mode)));
     }
 
     template < typename Pin >
@@ -31,6 +31,10 @@ struct configurator
     {
         return configured_pins[pin].mode; // invalid use of void?  Pin isn't configured.
     }
+
+    constexpr IO io() const { return IO{}; }
+
+    constexpr ConfiguredPins configured() const { return configured_pins; }
 
     constexpr configurator(AvailablePins p) : available_pins{p} {}
     constexpr configurator(AvailablePins ap, ConfiguredPins cp)
@@ -57,6 +61,12 @@ private:
         using desc = decltype(available_pins[pin]);
         return pin_config<desc,Mode>{available_pins[pin]};
     }
+
+    template < typename AP, typename CP >
+    constexpr auto create(AP ap, CP cp) const
+    {
+        return configurator<IO,AP,CP>{ap,cp};
+    }
 };
 
 }
@@ -64,7 +74,7 @@ private:
 template < typename PlatformBuilder >
 constexpr auto describe_platform(PlatformBuilder builder)
 {
-    return detail_::configurator<decltype(builder.pins())>{builder.pins()};
+    return detail_::configurator<decltype(builder.io()), decltype(builder.pins())>{builder.pins()};
 }
 
 

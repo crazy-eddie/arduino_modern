@@ -46,6 +46,18 @@ struct lc_term
     constexpr bool has(Key) const { return false; }
 };
 
+template < typename Collection >
+struct lc_iter;
+
+template < >
+struct lc_iter<lc_term>
+{
+    constexpr lc_iter(lc_term) {}
+    constexpr bool at_end() const { return true; }
+};
+
+
+
 template < typename Key, typename Value, typename Next = lc_term >
 struct lc_node : Next
 {
@@ -91,10 +103,38 @@ struct lc_node : Next
         return Next::has(key);
     }
 
+    constexpr lc_iter<lc_node> begin() const
+    {
+        return lc_iter<lc_node>{*this};
+    }
+
+    constexpr lc_iter<lc_term> end() const { return lc_iter<lc_term>{lc_term{}}; }
+
     constexpr bool has(Key) const { return true; }
 
 private:
     Value value;
+};
+
+template < typename Key, typename Value, typename Next >
+struct lc_iter<lc_node<Key,Value,Next>>
+{
+    constexpr lc_iter(lc_node<Key,Value,Next> n)
+        : node{n}
+    {}
+
+    constexpr bool at_end() const { return false; }
+
+    constexpr auto deref() const
+    {
+        return node[Key{}];
+    }
+
+    constexpr lc_iter<Next> next() const { return lc_iter<Next>{node}; }
+
+private:
+    lc_node<Key,Value,Next> node;
+
 };
 
 }

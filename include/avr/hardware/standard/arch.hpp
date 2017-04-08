@@ -4,6 +4,7 @@
 // TODO: remove this requirement.  The defs needed are likely in the avr libc.
 #include <Arduino.h>
 
+#include "../configurator.hpp"
 #include "../tags.hpp"
 #include "../arch.hpp"
 #include "../../../mpl/integral_constant.hpp"
@@ -29,12 +30,12 @@ struct arduino
 using standard_arch = arch_<arduino>;
 
 
-#define BV(X) mpl::integral_constant<uint8_t, 1 << X>{}
+#define BV(X) 1 << X
 
 // PWM and AI pins not yet available.
 
 constexpr auto standard_hw =
-        standard_arch{}
+        describe_platform(standard_arch{}
             .register_pin(pin1, ports::PD, BV(1))
             .register_pin(pin2, ports::PD, BV(2))
             //.register_pin(pin3, ports::PD, BV(3))
@@ -48,7 +49,7 @@ constexpr auto standard_hw =
             //.register_pin(pin11, ports::PB, BV(3))
             .register_pin(pin12, ports::PB, BV(4))
             .register_pin(pin13, ports::PB, BV(5))
-        .fin();
+        );
 
 /*
  * constexpr auto standard = arch.register_pin(pin13, PB, i<_BV(5)>{});
