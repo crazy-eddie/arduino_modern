@@ -3,13 +3,6 @@
 
 namespace avr { namespace hardware { namespace test {
 
-template < typename Port, typename Mask >
-struct pin
-{
-    static Port port;
-    static uint8_t const mask = Mask::value;
-};
-
 template <int>
 struct port
 {
