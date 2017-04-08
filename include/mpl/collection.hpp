@@ -54,6 +54,11 @@ struct lc_node : Next
         , value{val}
     {}
 
+    constexpr lc_node(lc_node const& n)
+        : Next{n}
+        , value{n.value}
+    {}
+
     template < typename Key_, typename Value_ >
     constexpr auto add(Key_, Value_ val) const
     {

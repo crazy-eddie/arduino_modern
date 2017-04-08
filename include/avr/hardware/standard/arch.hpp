@@ -1,6 +1,7 @@
 #ifndef AVR_HARDWARE_STANDARD_ARCH_HPP
 #define AVR_HARDWARE_STANDARD_ARCH_HPP
 
+// TODO: remove this requirement.  The defs needed are likely in the avr libc.
 #include <Arduino.h>
 
 #include "../tags.hpp"

@@ -23,6 +23,8 @@ struct port
     static uint8_t input;
     static uint8_t output;
 
+    using register_type = uint8_t;
+
     constexpr port() {}
 };
 

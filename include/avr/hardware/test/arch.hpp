@@ -17,6 +17,7 @@ struct test_arch_
     static void enable_interrupts() {}
 };
 
+#if 0
 #define BV(X) mpl::integral_constant<uint8_t, 1 << X>{}
 
 constexpr auto test_arch =
@@ -25,6 +26,7 @@ constexpr auto test_arch =
             .register_pin(pin2, P0, BV(1))
             .register_pin(pin3, P1, BV(0))
         .fin();
+#endif
 
 }}}
 
