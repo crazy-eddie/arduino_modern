@@ -9,19 +9,22 @@ using namespace avr::hardware;
 
 using namespace avr;
 
-// 690 -30-> 728 -8-> 736 -8-> 744
+// 1260 16 12 1288 before using the driver.
 auto const driver = initialize(standard_hw.set_mode(pin13, pin_config::output));
                                           //.set_mode(pin1, pin_config::output)
                                           //.set_mode(pin2, pin_config::output));
+
+// 666 0 9 675 == same as not doing anything but delay.  The constexpr stuff is functioning.
+//constexpr auto blah = standard_hw.set_mode(pin13, pin_config::output);
 
 void setup()
 {
 }
 
 void loop() {
-    driver.high(pin13);
+    driver.high(pin13); // 1276 16 12 1304 when added.
     delay(1000);              // wait for a second
-    driver.low(pin13);
+    driver.low(pin13);  // 1302 16 12 1330 when also added.
     delay(500);              // wait for a second
     // driver.read(pin13); // Compiler error!
 }
