@@ -1,8 +1,6 @@
 #ifndef MPL_INTEGRAL_CONSTANT_HPP
 #define MPL_INTEGRAL_CONSTANT_HPP
 
-#include <iostream>
-
 namespace mpl {
 
 template < typename T, T Value >
