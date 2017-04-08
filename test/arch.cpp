@@ -13,8 +13,8 @@ BOOST_AUTO_TEST_CASE(pass) {  }
 
 BOOST_AUTO_TEST_CASE(immediate_interface)
 {
-    constexpr auto p1 = avr::hardware::pin(avr::hardware::test::P0, 0x01);
-    constexpr auto p2 = avr::hardware::pin(avr::hardware::test::P0, 0x02);
+    constexpr auto p1 = avr::hardware::pin(avr::hardware::test::P0, 1_c);
+    constexpr auto p2 = avr::hardware::pin(avr::hardware::test::P0, 2_c);
 
     constexpr auto ops = avr::hardware::basic_ops<avr::hardware::test::test_arch_>{};
 

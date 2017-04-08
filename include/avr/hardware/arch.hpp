@@ -72,31 +72,27 @@ struct arch__
     using ops = RawOps;
 
     template < typename Pin, typename Port, typename Mask >
-    constexpr auto register_pin(Pin p, Port port, Mask mask) const
+    static constexpr auto register_pin(Pin p, Port port, Mask mask)
     {
-        return create(p, pins_.add(p, pin(port,mask)));
+        return create(p, PinConfiguration::add(p, pin(port,mask)));
     }
 
     template < typename Pin >
-    constexpr bool has_pin(Pin pin) const
+    static constexpr bool has_pin(Pin pin)
     {
-        return pins_.has(pin);
+        return PinConfiguration::has(pin);
     }
 
-    constexpr PinConfiguration pins() const { return pins_; }
+    static constexpr PinConfiguration pins() { return PinConfiguration{}; }
 
-    constexpr RawOps io() const { return RawOps{}; }
+    static constexpr RawOps io() { return RawOps{}; }
 
     constexpr arch__() {}
-    constexpr arch__(PinConfiguration p) : pins_(p) {}
-
-private:
-    PinConfiguration pins_;
 
     template < typename Pin, typename NewPins >
-    constexpr auto create(Pin, NewPins p) const
+    static constexpr auto create(Pin, NewPins)
     {
-        return arch__<RawOps,NewPins>{p};
+        return arch__<RawOps,NewPins>{};
     }
 };
 

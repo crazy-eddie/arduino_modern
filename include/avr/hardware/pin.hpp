@@ -6,26 +6,22 @@ namespace avr { namespace hardware {
 
 namespace detail_ {
 
-template < typename Port >
+template < typename Port, typename Mask >
 struct pin
 {
     using register_type = typename Port::register_type;
-    constexpr pin(register_type m) : port_(), mask_(m) {}
+    constexpr pin() {}
 
-    constexpr Port port() const { return port_; }
-    constexpr register_type mask() const { return mask_; }
-
-private:
-    Port port_;
-    register_type mask_;
+    static constexpr Port port() { return Port{}; }
+    static constexpr register_type mask() { return Mask::value(); }
 };
 
 }
 
-template < typename Port >
-constexpr detail_::pin<Port> pin(Port, typename Port::register_type mask)
+template < typename Port, typename Mask >
+constexpr detail_::pin<Port,Mask> pin(Port, Mask)
 {
-    return detail_::pin<Port>{mask};
+    return detail_::pin<Port, Mask>{};
 }
 
 
