@@ -16,48 +16,40 @@ struct driver
 {
     constexpr driver() {}
 
-    constexpr driver(InputPins ip, OutputPins op)
-        : input_pins(ip)
-        , output_pins(op)
-    {}
-
     template < typename Pin >
     void high(Pin pin) const
     {
-        IO::high(output_pins[pin]);
+        IO::high(OutputPins::get(pin));
     }
 
     template < typename Pin >
     void low(Pin pin) const
     {
-        IO::low(output_pins[pin]);
+        IO::low(OutputPins::get(pin));
     }
 
     template < typename Pin >
     bool read(Pin pin) const
     {
-        return IO::read(input_pins[pin]);
+        return IO::read(InputPins::get(pin));
     }
 
     template < typename Pin, typename Desc >
     constexpr auto add_pin(Pin pin, Desc desc, pin_config::input_tag) const
     {
-        using new_input = decltype(input_pins.add(pin, desc));
+        using new_input = decltype(InputPins::add(pin, desc));
 
-        return driver<IO, new_input, OutputPins>{input_pins.add(pin,desc), output_pins};
+        return driver<IO, new_input, OutputPins>{};
     }
 
     template < typename Pin, typename Desc >
     constexpr auto add_pin(Pin pin, Desc desc, pin_config::output_tag) const
     {
-        using new_output = decltype(output_pins.add(pin,desc));
+        using new_output = decltype(OutputPins::add(pin,desc));
 
-        return driver<IO, InputPins, new_output>{input_pins, output_pins.add(pin,desc)};
+        return driver<IO, InputPins, new_output>{};
     }
 
-private:
-    InputPins input_pins;
-    OutputPins output_pins;
 };
 
 // TODO: accumulate

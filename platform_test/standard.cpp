@@ -55,10 +55,5 @@ text       data     bss     dec     hex filename
     728       0       9     737     2e1 /home/satan/github/arduino_modern/platform/platform_test/standard.elf
       0       0       0       0       0 /home/satan/github/arduino_modern/platform/platform_test/standard.eep
  *
- * refactor: // TODO: this massively increased size!!!  Interface is cleaner but obviously more is being put into the executable.
- *
-text       data     bss     dec     hex filename
-   1302      16      12    1330     532 /home/satan/github/arduino_modern/platform/platform_test/standard.elf
-      0       0       0       0       0 /home/satan/github/arduino_modern/platform/platform_test/standard.eep
 
  */

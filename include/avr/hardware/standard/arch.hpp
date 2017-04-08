@@ -30,7 +30,7 @@ struct arduino
 using standard_arch = arch_<arduino>;
 
 
-#define BV(X) 1 << X
+#define BV(X) mpl::integral_constant<int, 1 << X>{}
 
 // PWM and AI pins not yet available.
 

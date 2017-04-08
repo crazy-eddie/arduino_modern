@@ -21,9 +21,9 @@ struct test_arch_
 
 constexpr auto test_arch =
     describe_platform(arch_<test_arch_>{}
-        .register_pin(pin1, P0, 1)
-        .register_pin(pin2, P0, 2)
-        .register_pin(pin3, P1, 1)
+        .register_pin(pin1, P0, 1_c)
+        .register_pin(pin2, P0, 2_c)
+        .register_pin(pin3, P1, 1_c)
     );
 
 }}}
