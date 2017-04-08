@@ -6,6 +6,11 @@
 
 #include "../../mpl/util.hpp"
 
+// TODO: Can probably eliminate this by sticking the initialization into the pin itself
+//       as a static initialization.  Thus you'd go: auto const pin = hardware_config.pin(pin1)
+//       When that pin is instantiated the member will be initialized before main and the
+//       routine to do so will call set_mode.
+
 namespace avr { namespace hardware {
 
 
