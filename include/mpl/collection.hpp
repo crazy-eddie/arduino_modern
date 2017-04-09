@@ -38,36 +38,16 @@ private:
 
 namespace detail_ {
 
-struct lc_term
-{
-    constexpr lc_term(){}
-
-    template < typename Key >
-    static constexpr bool has(Key) { return false; }
-};
+struct lc_term;
 
 template < typename Collection >
 struct lc_iter;
-
-template < >
-struct lc_iter<lc_term>
-{
-    constexpr lc_iter() {}
-    static constexpr bool at_end() { return true; }
-};
-
 
 
 template < typename Key, typename Value, typename Next = lc_term >
 struct lc_node : Next
 {
     constexpr lc_node(){}
-
-    template < typename Key_, typename Value_ >
-    static constexpr auto add(Key_, Value_ val)
-    {
-        return lc_node<Key_,Value_,lc_node>{};
-    }
 
     template < typename Key_ >
     static constexpr auto remove(Key_ key)
@@ -79,6 +59,19 @@ struct lc_node : Next
     static constexpr Next remove(Key)
     {
         return Next{};
+    }
+
+    template < typename Key_, typename Value_ >
+    static constexpr auto insert(Key_ key, Value_ value)
+    {
+        using next = decltype(Next::insert(key,value));
+        return lc_node<Key,Value, next>{};
+    }
+
+    template < typename Value_ >
+    static constexpr auto insert(Key, Value_)
+    {
+        return lc_node<Key,Value_,Next>{};
     }
 
     template < typename Key_>
@@ -102,9 +95,30 @@ struct lc_node : Next
         return lc_iter<lc_node>{};
     }
 
-    static constexpr lc_iter<lc_term> end() { return lc_iter<lc_term>{}; }
+    static constexpr lc_iter<lc_term> end(); // { return lc_iter<lc_term>{}; }
 
 };
+
+struct lc_term
+{
+    constexpr lc_term(){}
+
+    template < typename Key >
+    static constexpr bool has(Key) { return false; }
+
+    template < typename Key, typename Value >
+    static constexpr auto insert(Key,Value)
+    {
+        return lc_node<Key,Value>{};
+    }
+};
+template < >
+struct lc_iter<lc_term>
+{
+    constexpr lc_iter() {}
+    static constexpr bool at_end() { return true; }
+};
+
 
 template < typename Key, typename Value, typename Next >
 struct lc_iter<lc_node<Key,Value,Next>>
@@ -124,20 +138,14 @@ struct lc_iter<lc_node<Key,Value,Next>>
     constexpr lc_iter<Next> next() const { return lc_iter<Next>{}; }
 };
 
+template < typename Key, typename Value, typename Next >
+constexpr lc_iter<lc_term> lc_node<Key,Value,Next>::end() { return lc_iter<lc_term>{}; }
+
 }
 
-struct lookup_collection
+struct lookup_collection : detail_::lc_term
 {
     constexpr lookup_collection(){}
-
-    template < typename Key, typename Value >
-    static constexpr auto add(Key, Value)
-    {
-        return detail_::lc_node<Key,Value>{};
-    }
-
-    template < typename Key >
-    static constexpr bool has(Key) { return false; }
 };
 
 

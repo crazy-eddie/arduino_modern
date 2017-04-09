@@ -23,7 +23,7 @@ struct configurator
     static constexpr auto set_mode(Pin pin, Mode mode)
     {
         return create( AvailablePins::remove(pin)
-                     , ConfiguredPins::add(pin, make_config(pin,mode)));
+                     , ConfiguredPins::insert(pin, make_config(pin,mode)));
     }
 
     template < typename Pin >

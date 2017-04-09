@@ -37,7 +37,7 @@ struct driver
     template < typename Pin, typename Desc >
     constexpr auto add_pin(Pin pin, Desc desc, pin_config::input_tag) const
     {
-        using new_input = decltype(InputPins::add(pin, desc));
+        using new_input = decltype(InputPins::insert(pin, desc));
 
         return driver<IO, new_input, OutputPins>{};
     }
@@ -45,7 +45,7 @@ struct driver
     template < typename Pin, typename Desc >
     constexpr auto add_pin(Pin pin, Desc desc, pin_config::output_tag) const
     {
-        using new_output = decltype(OutputPins::add(pin,desc));
+        using new_output = decltype(OutputPins::insert(pin,desc));
 
         return driver<IO, InputPins, new_output>{};
     }

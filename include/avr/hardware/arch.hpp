@@ -74,7 +74,7 @@ struct arch__
     template < typename Pin, typename Port, typename Mask >
     static constexpr auto register_pin(Pin p, Port port, Mask mask)
     {
-        return create(p, PinConfiguration::add(p, pin(port,mask)));
+        return create(p, PinConfiguration::insert(p, pin(port,mask)));
     }
 
     template < typename Pin >
