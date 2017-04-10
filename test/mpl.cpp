@@ -71,3 +71,15 @@ BOOST_AUTO_TEST_CASE(lookup_collection)
     // uncomment to explode...
     //constexpr auto blow = test_collection2[key<0>{}];
 }
+
+BOOST_AUTO_TEST_CASE(collection)
+{
+    constexpr auto test_collection = mpl::collection{};
+    constexpr auto t0 = test_collection.append(1_c);
+    constexpr auto t1 = t0.append(2_c);
+
+    BOOST_CHECK_EQUAL(t1.get(0_c).value(), 1);
+    BOOST_CHECK_EQUAL(t1.get(1_c).value(), 2);
+
+    BOOST_CHECK_EQUAL(count(t1.begin(), t1.end()), 2);
+}

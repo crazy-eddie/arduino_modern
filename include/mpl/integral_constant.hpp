@@ -12,6 +12,18 @@ struct integral_constant
 template < uint8_t Value >
 using uint8_t_ = integral_constant<uint8_t, Value>;
 
+template < typename T, T Value0, T Value1 >
+constexpr auto operator - (integral_constant<T,Value0>,integral_constant<T,Value1>)
+{
+    return integral_constant<T,Value0-Value1>{};
+}
+
+template < typename T, T Value0, T Value1 >
+constexpr auto operator | (integral_constant<T,Value0>,integral_constant<T,Value1>)
+{
+    return integral_constant<T,Value0 | Value1>{};
+}
+
 namespace detail_ {
 
 template < typename T, char ... Seq >

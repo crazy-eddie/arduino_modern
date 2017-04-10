@@ -47,6 +47,17 @@ struct basic_ops : RawOps
     }
 
     template < typename Pin >
+    static void toggle(Pin pin)
+    {
+        auto old = basic_ops::status_register();
+        basic_ops::disable_interrupts();
+
+        *(pin.port().output_register()) ^= pin.mask();
+
+        basic_ops::status_register() = old;
+    }
+
+    template < typename Pin >
     static void low(Pin pin)
     {
         auto old = basic_ops::status_register();

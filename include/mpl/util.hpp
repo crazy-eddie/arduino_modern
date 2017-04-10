@@ -28,6 +28,24 @@ void for_each(Collection c, Fun f)
     for_each(c.begin(), c.end(), f);
 }
 
+template < typename End, typename Result, typename Op >
+constexpr Result accumulate(End,End,Result, Op)
+{
+    return Result{};
+}
+
+template < typename Beg, typename End, typename Result, typename Op >
+constexpr auto accumulate(Beg beg, End end, Result result, Op op)
+{
+    return accumulate(beg.next(), end, op(result, beg.deref()), op);
+}
+
+template < typename Collection, typename Result, typename Op >
+constexpr auto accumulate(Collection collection, Result result, Op op)
+{
+    return accumulate(collection.begin(), collection.end(), result, op);
+}
+
 }
 
 #endif

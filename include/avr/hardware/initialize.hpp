@@ -21,7 +21,7 @@ auto initialize(HardwareConfig hardware_config)
     mpl::for_each( hardware_config.configured()
                  , [=] (auto pin)
                    {
-                       hardware_config.io().set_mode(pin.pin_desc, pin.mode);
+                       hardware_config.io().set_mode(pin.value().pin_desc, pin.value().mode);
                    });
 
     return create_driver(hardware_config);

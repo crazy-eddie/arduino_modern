@@ -2,6 +2,8 @@
 #define AVR_HARDWARE_DRIVER_HPP
 
 #include "tags.hpp"
+#include "pin.hpp"
+#include "../../mpl/util.hpp"
 
 namespace avr { namespace hardware {
 
@@ -16,16 +18,31 @@ struct driver
 {
     constexpr driver() {}
 
-    template < typename Pin >
-    void high(Pin pin) const
+    template < typename ... Pin >
+    void high(Pin ... pins) const
     {
-        IO::high(OutputPins::get(pin));
+        constexpr auto pin_collection = collate_pins(OutputPins{}, pins...);
+        mpl::for_each( pin_collection.begin()
+                     , pin_collection.end()
+                     , [](auto pin_port) { IO::high(hardware::pin(pin_port.key(), pin_port.value())); });
     }
 
-    template < typename Pin >
-    void low(Pin pin) const
+    template < typename ... Pin >
+    void low(Pin ... pins) const
     {
-        IO::low(OutputPins::get(pin));
+        constexpr auto pin_collection = collate_pins(OutputPins{}, pins...);
+        mpl::for_each( pin_collection.begin()
+                     , pin_collection.end()
+                     , [](auto pin_port) { IO::low(hardware::pin(pin_port.key(), pin_port.value())); });
+    }
+
+    template < typename ... Pin >
+    void toggle(Pin ... pins) const
+    {
+        constexpr auto pin_collection = collate_pins(OutputPins{}, pins...);
+        mpl::for_each( pin_collection.begin()
+                     , pin_collection.end()
+                     , [](auto pin_port) { IO::toggle(hardware::pin(pin_port.key(), pin_port.value())); });
     }
 
     template < typename Pin >
@@ -63,8 +80,8 @@ template < typename Driver, typename Beg, typename End >
 constexpr auto const create_driver(Driver driver, Beg beg, End end)
 {
     return create_driver(driver.add_pin( beg.key()
-                                       , beg.deref().pin_desc
-                                       , beg.deref().mode), beg.next(), end);
+                                       , beg.deref().value().pin_desc
+                                       , beg.deref().value().mode), beg.next(), end);
 }
 
 template < typename IO >

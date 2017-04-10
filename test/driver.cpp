@@ -31,3 +31,24 @@ BOOST_AUTO_TEST_CASE(pin_io)
     P1.input = 0x01;
     BOOST_CHECK(driver.read(pin3));
 }
+
+BOOST_AUTO_TEST_CASE(multi_pin)
+{
+    auto const driver = initialize(test_arch.set_mode(pin1,output)
+                                            .set_mode(pin2,output)
+                                            .set_mode(pin3,output));
+
+    P0.output = 0;
+    P1.output = 0;
+
+    driver.high(pin1, pin2, pin3);
+    BOOST_CHECK_EQUAL(0x03, P0.output);
+    BOOST_CHECK_EQUAL(0x01, P1.output);
+
+    driver.low(pin1,pin3);
+    BOOST_CHECK_EQUAL(0x02, P0.output);
+    BOOST_CHECK_EQUAL(0x00, P1.output);
+
+    driver.toggle(pin1,pin2);
+    BOOST_CHECK_EQUAL(0x01, P0.output);
+}
