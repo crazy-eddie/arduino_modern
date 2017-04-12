@@ -2,7 +2,9 @@
 #define AVR_HARDWARE_STANDARD_ARCH_HPP
 
 // TODO: remove this requirement.  The defs needed are likely in the avr libc.
-#include <Arduino.h>
+//#include <Arduino.h>
+//#include <avr/io.h>
+#include <avr/interrupt.h>
 
 #include "../configurator.hpp"
 #include "../tags.hpp"

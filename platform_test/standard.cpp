@@ -4,6 +4,8 @@
 #include "../include/avr/hardware/standard/ports.hpp"
 #include "../include/avr/hardware/initialize.hpp"
 
+#include <util/delay.h>
+
 using namespace avr::hardware::standard;
 using namespace avr::hardware;
 
@@ -22,15 +24,16 @@ void setup()
 }
 
 void loop() {
-    driver.high(pin13); // 1276 16 12 1304 when added.
-    delay(1000);              // wait for a second
-    driver.low(pin13);  // 1302 16 12 1330 when also added.
-    delay(500);              // wait for a second
-    // driver.read(pin13); // Compiler error!
+    driver.high(pin13);
+    _delay_ms(1000);
+    driver.low(pin13);
+    _delay_ms(500);
 }
 
-
-
+int main()
+{
+    while (1) { loop(); }
+}
 
 
 /*
@@ -55,5 +58,9 @@ text       data     bss     dec     hex filename
     728       0       9     737     2e1 /home/satan/github/arduino_modern/platform/platform_test/standard.elf
       0       0       0       0       0 /home/satan/github/arduino_modern/platform/platform_test/standard.eep
  *
+ * no more core:
+text       data     bss     dec     hex filename
+    238       0       0     238      ee /home/satan/github/arduino_modern/platform/platform_test/standard.elf
+      0       0       0       0       0 /home/satan/github/arduino_modern/platform/platform_test/standard.eep
 
  */
