@@ -35,9 +35,3 @@ function(add_boost_test name)
 endfunction()
 
 add_boost_test(mpl mpl.cpp)
-
-add_boost_test(arch arch.cpp)
-add_boost_test(configurator configurator.cpp)
-add_boost_test(initialize initialize.cpp)
-add_boost_test(driver driver.cpp)
-#add_boost_test(stepper stepper.cpp)
