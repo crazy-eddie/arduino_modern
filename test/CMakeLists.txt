@@ -35,3 +35,4 @@ function(add_boost_test name)
 endfunction()
 
 add_boost_test(mpl mpl.cpp)
+add_boost_test(avr avr.cpp)
