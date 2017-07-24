@@ -232,15 +232,15 @@ BOOST_AUTO_TEST_CASE(derp)
     BOOST_CHECK(mpl::same_type(1_p, pin_idx<1>{}));
 
     constexpr auto x =*
-            (f1 | f2)--[1_p , 2_p]--(f3)
-                 (f4)--[3_p , 4_p]--(f5);
+            (f1 | f2)--[1_p , 4_p]--(f3)
+                 (f4)--[2_p , 3_p]--(f5);
 
 
     constexpr auto y = mpl::lookup_collection{}
         .insert(1_p, function_set<some_fun<1>,some_fun<2>>{})
-        .insert(2_p, function_set<some_fun<3>>{})
-        .insert(3_p, function_set<some_fun<4>>{})
-        .insert(4_p, function_set<some_fun<5>>{});
+        .insert(4_p, function_set<some_fun<3>>{})
+        .insert(2_p, function_set<some_fun<4>>{})
+        .insert(3_p, function_set<some_fun<5>>{});
 
     BOOST_CHECK(mpl::same_type(x,y));
 }
