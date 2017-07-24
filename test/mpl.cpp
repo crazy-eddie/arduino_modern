@@ -249,9 +249,9 @@ BOOST_AUTO_TEST_CASE(derp)
     BOOST_CHECK(mpl::same_type(1_p, pin_idx<1>{}));
 
     constexpr auto x =*
-            (f1 | f2)--[1_p -U- 6_p]--(f3)
-                 (f4)--[2_p  ,  5_p]--(f5)
-                 (f6)--[3_p -_- 4_p]--(f7);
+            (f1 | f2)--[1_p - U - 6_p]--(f3)
+                 (f4)--[2_p   ,   5_p]--(f5)
+                 (f6)--[3_p - _ - 4_p]--(f7);
 
 
 
