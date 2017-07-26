@@ -207,8 +207,8 @@ struct pin_idx
 template < char ... Seq >
 constexpr auto operator""_p()
 {
-    //return mpl::integral_constant<int, mpl::detail_::create_constant<int, Seq...>::value()>{};
-    return pin_idx<mpl::detail_::create_constant<int, Seq...>::value()>{};
+    constexpr auto i = operator""_c<Seq...>();
+    return pin_idx<i.value()>{};
 }
 
 template <int I1, int I2>
@@ -263,5 +263,58 @@ BOOST_AUTO_TEST_CASE(derp)
         .insert(3_p, function_set<some_fun<6>>{})
         .insert(4_p, function_set<some_fun<7>>{});
 
-    //BOOST_CHECK(mpl::same_type(x,y));
+    BOOST_CHECK(mpl::same_type(x,y));
+    BOOST_CHECK(!mpl::same_type(x.get(1_p), x.get(6_p)));
 }
+
+template < typename ... Devices >
+struct device_collection
+{
+    constexpr device_collection() {}
+};
+
+template < typename Bus, typename ... Addr >
+struct device : device_collection<device<Bus,Addr...>>
+{
+    constexpr device() {}
+};
+
+template < int CtRemain, typename ... Args>
+struct device_builder
+{
+    constexpr device_builder() {}
+
+    template < typename Tag >
+    constexpr auto operator [] (Tag) const
+    {
+        return device_builder<CtRemain-1,Args...,Tag>{};
+    }
+};
+
+template < typename ... Args >
+struct device_builder<1, Args...>
+{
+    constexpr device_builder() {}
+
+    template < typename Tag >
+    constexpr auto operator [] (Tag) const
+    {
+        return device<Args...,Tag>{};
+    }
+};
+
+template < typename Module, int AddrLen >
+struct module : device_builder<AddrLen,Module>
+{
+    constexpr module() {}
+};
+
+struct digital_io : module<digital_io, 2>
+{
+    constexpr digital_io() {}
+};
+
+struct analog_converter : module<analog_converter, 1>
+{
+    constexpr analog_converter() {}
+};

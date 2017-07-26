@@ -35,4 +35,7 @@ function(add_boost_test name)
 endfunction()
 
 add_boost_test(mpl mpl.cpp)
-add_boost_test(avr avr.cpp)
+add_boost_test(pin_idx pin_idx.cpp)
+add_boost_test(module module.cpp)
+add_boost_test(chip_builder chip_builder.cpp)
+#add_boost_test(avr avr.cpp)
