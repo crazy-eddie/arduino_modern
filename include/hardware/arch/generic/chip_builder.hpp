@@ -4,6 +4,7 @@
 #include "../../../mpl/undefined.hpp"
 
 #include "pin.hpp"
+#include "chip.hpp"
 
 namespace crazy_arduino { namespace hardware { namespace arch { namespace generic {
 
@@ -50,7 +51,7 @@ struct chip_builder<mpl::undefined, mpl::undefined, Collection>
         return chip_builder<F1,mpl::undefined,Collection>{};
     }
 
-    constexpr Collection operator * () const { return Collection{}; }
+    constexpr Collection operator * () const { return chip<Collection>{}; }
 };
 
 constexpr auto U = mpl::undef();
