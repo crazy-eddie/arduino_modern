@@ -1,25 +1,27 @@
 #ifndef  HARDWARE_ARCH_AVR_ANALOG_CONVERTER_HPP
 #define  HARDWARE_ARCH_AVR_ANALOG_CONVERTER_HPP
 
+#include "../generic/module.hpp"
 
-namespace crazy_arduino { namespace hardware { namespace arch { namespace avr_detail {
 
-template < int Idx >
-struct adc_channel
-{
-    constexpr adc_channel(){}
-};
+namespace crazy_arduino { namespace hardware { namespace arch { namespace avr {
 
-struct analog_converter
+using namespace generic;
+
+namespace detail_ {
+
+struct analog_converter : module<analog_converter,1>
 {
     constexpr analog_converter(){}
 
-    template < typename Idx >
-    constexpr auto operator[](Idx) const
-    {
-        return adc_channel<Idx::value()>{};
-    }
 };
+
+}
+
+constexpr auto ADC = detail_::analog_converter{};
+
+template < typename ChanIdx >
+using adc_channel = function<detail_::analog_converter, ChanIdx>;
 
 }}}}
 

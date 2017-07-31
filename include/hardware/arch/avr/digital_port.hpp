@@ -1,31 +1,27 @@
 #ifndef  HARDWARE_ARCH_AVR_DIGITAL_PORT_HPP
 #define  HARDWARE_ARCH_AVR_DIGITAL_PORT_HPP
 
-namespace crazy_arduino { namespace hardware { namespace arch { namespace avr_detail {
+#include "../generic/module.hpp"
 
-template < typename Port, int Idx >
-struct digital_io_pin
-{
-    constexpr digital_io_pin(){}
-};
+namespace crazy_arduino { namespace hardware { namespace arch { namespace avr {
 
-template < int Idx >
-struct digital_port
-{
-    constexpr digital_port() {}
+using namespace generic;
 
-    template < typename PIdx >
-    constexpr auto operator[](PIdx) const
-    {
-        return digital_io_pin<digital_port, PIdx::value()>{};
-    }
-};
 
-template < int Idx >
-constexpr auto port() { return digital_port<Idx>{}; }
+namespace detail_ {
 
-template < typename Idx >
-constexpr auto port(Idx) { return digital_port<Idx::value()>{}; }
+struct digital_io : generic::module<digital_io, 2U> { constexpr digital_io() {} };
+
+}
+
+constexpr auto digital_io = detail_::digital_io{};
+
+constexpr auto PB = digital_io[1_c];
+constexpr auto PC = digital_io[2_c];
+constexpr auto PD = digital_io[3_c];
+
+template < typename Port, typename PinIdx >
+using digital_pin = function<detail_::digital_io, Port, PinIdx>;
 
 }}}}
 
