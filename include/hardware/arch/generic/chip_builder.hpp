@@ -51,7 +51,7 @@ struct chip_builder<mpl::undefined, mpl::undefined, Collection>
         return chip_builder<F1,mpl::undefined,Collection>{};
     }
 
-    constexpr Collection operator * () const { return chip<Collection>{}; }
+    constexpr chip<Collection> operator * () const { return chip<Collection>{}; }
 };
 
 constexpr auto U = mpl::undef();
