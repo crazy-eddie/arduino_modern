@@ -13,6 +13,9 @@ struct mapped
 
     template < typename Pin >
     static constexpr auto get(Pin pin) { return Chip::get(Mapping::get(pin)); }
+
+    static constexpr auto chip = Chip{};
+    static constexpr auto mapping = Mapping{};
 };
 
 template < typename PinCollection, typename Mapping = mpl::lookup_collection >
