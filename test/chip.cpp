@@ -28,6 +28,7 @@ BOOST_AUTO_TEST_CASE(pin_boards)
     //f(pinned.get(3_p));
 
 
+    // TODO: set() should not be needed.
     static_assert(same_type(set(pinned.get(2_p)), set(PC[6_c])), "fail");
     static_assert(same_type(set(pinned.get(3_p)), set(PD[0_c])), "fail");
 }
